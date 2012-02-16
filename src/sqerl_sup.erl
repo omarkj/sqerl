@@ -28,5 +28,7 @@ init(PoolerConfig) ->
     error_logger:info_msg("Starting sqerl supervisor~n"),
     PoolerSup = {pooler_sup, {pooler_sup, start_link, [PoolerConfig]},
                  permanent, infinity, supervisor, [pooler_sup]},
+    %% EmysqlSup = {emysql_sup, {emysql_sup, start_link, []},
+    %%              permanent, infinity, supervisor, [emysql_sup]},
 
     {ok, {{one_for_one, 5, 10}, [PoolerSup]}}.

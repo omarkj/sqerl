@@ -1,3 +1,5 @@
+%% -*- mode: erlang;erlang-indent-level: 4;indent-tabs-mode: nil -*-
+%% -*- erlang-indent-level: 4;indent-tabs-mode: nil; fill-column: 92 -*-
 {application, sqerl,
  [
   {description, "Simple database abstraction layer"},
@@ -6,8 +8,8 @@
   {applications, [kernel,
                   stdlib,
                   crypto,
-                  emysql,
                   epgsql,
-                  pooler]},
+                  emysql]},
+  {included_applications, [pooler]},
   {mod, {sqerl_app, []}}
  ]}.
