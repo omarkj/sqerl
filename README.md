@@ -1,46 +1,17 @@
 # sqerl #
 
-This is the repository for sqerl, a database layer originally written for chef for interfacing with mysql and postgres.
+This is a modified version of sqerl from opscode that does not include any pooling application.
 
-Chef is a system integration framework written in erlang and ruby and designed to bring the benefits of configuration management to your entire infrastructure.
+I have removed mysql support for the time being.
 
-The Chef Wiki is the definitive source of user documentation.
+opscode's sqerl is available at https://github.com/opscode/sqerl
 
-    http://wiki.opscode.com/display/chef/Home
-
-This README focuses on developers who want to modify Chef source code.  For users who just want to run the latest and greatest Chef development version in their environment, see:
-
-   [TODO: add URL when available for erlang chef build process]
-
-# DEVELOPMENT:
-
-Before working on the code, if you plan to contribute your changes, you need to read the Opscode Contributing document.
-
-    http://wiki.opscode.com/display/chef/How+to+Contribute
-
-You will also need to set up the repository with the appropriate branches. We document the process on the Chef Wiki.
-
-    http://wiki.opscode.com/display/chef/Working+with+git
-
-Once your repository is set up, you can start working on the code.
-
-# LINKS:
-
-Source:
-
-    https://github.com/opscode/sqerl
-
-Tickets/Issues:
-
-    http://tickets.opscode.com/
-
-Documentation:
-
-    http://wiki.opscode.com/display/chef/Home/
+I tried adhering to the Apache license but have no idea how I should have changed the files. If you have any comments please to let me know.
 
 # LICENSE:
 
 Copyright 2011-2012 Opscode, Inc. All Rights Reserved.
+Portions Copyright 2012 Omar Yasin All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.  You may obtain a copy of the License at
 

@@ -1,8 +1,10 @@
 %% -*- erlang-indent-level: 4;indent-tabs-mode: nil; fill-column: 92 -*-
 %% ex: ts=4 sw=4 et
 %% @author Kevin Smith <kevin@opscode.com>
+%% @author Omar Yasin <omar@kodi.is>>
 %% @doc Abstraction around interacting with SQL databases
 %% Copyright 2011-2012 Opscode, Inc. All Rights Reserved.
+%% Portions copyright 2012 Omar Yasin. All Rights Reserved.
 %%
 %% This file is provided to you under the Apache License,
 %% Version 2.0 (the "License"); you may not use this file
@@ -42,8 +44,8 @@
                             end).
 
 %% API
--export([start_link/0,
-         start_link/1,
+-export([start_link/6,
+         start_link/4,
          exec_prepared_select/3,
          exec_prepared_statement/3,
          close/1]).
@@ -91,28 +93,27 @@ exec_prepared_statement(Cn, Name, Args) when is_pid(Cn),
 close(Cn) ->
     gen_server:call(Cn, close).
 
+start_link(DbType, Database, Host, Username, Password, Opts) ->
+    gen_server:start_link(?MODULE, [DbType, Database, Host, Username, Password, Opts], []).
+start_link(DbType, Database, Host, Opts) ->
+    gen_server:start_link(?MODULE, [DbType, Database, Host, os:getenv("USER"), "", Opts], []).
 
-start_link() ->
-    gen_server:start_link(?MODULE, [], []).
-start_link(DbType) ->
-    gen_server:start_link(?MODULE, [DbType], []).
-
-init([]) ->
-    init(ev(db_type));
-init(DbType) ->
+init([DbType, Database, Host, Username, Password, Opts]) ->
     CallbackMod = case DbType of
-                      pgsql -> sqerl_pgsql_client;
-                      mysql -> sqerl_mysql_client
+                      pgsql -> sqerl_pgsql_client
                   end,
-    IdleCheck = ev(idle_check, 1000),
-    Config = [{host, ev(db_host)},
-              {port, ev(db_port)},
-              {user, ev(db_user)},
-              {pass, ev(db_pass)},
-              {db, ev(db_name)},
+    IdleCheck = proplists:get_value(idle_check, Opts, 1000),
+    Port = proplists:get_value(port, Opts, 5432),
+    PreparedStatements = proplists:get_value(prepared_statements, Opts, ev(prepared_statements)),
+    ColumnTransforms = proplists:get_value(column_transforms, Opts, ev(column_transforms)),
+    Config = [{host, Host},
+              {port, Port},
+              {user, Username},
+              {pass, Password},
+              {db, Database},
               {idle_check, IdleCheck},
-              {prepared_statements, read_statements(ev(prepared_statements))},
-              {column_transforms, ev(column_transforms)}],
+              {prepared_statements, read_statements(PreparedStatements)},
+              {column_transforms, ColumnTransforms}],
     case CallbackMod:init(Config) of
         {ok, CallbackState} ->
             Timeout = IdleCheck,
@@ -185,9 +186,4 @@ ev(Key) ->
             Msg = {missing_application_config, sqerl, Key},
             error_logger:error_report(Msg),
             error(Msg)
-    end.
-ev(Key, Default) ->
-    case application:get_env(sqerl, Key) of
-        undefined -> Default;
-        {ok, V} -> V
     end.

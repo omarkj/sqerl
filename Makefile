@@ -1,5 +1,4 @@
-DEPS = deps/emysql deps/meck deps/automeck \
-       deps/pooler deps/epgsql
+DEPS = deps/meck deps/automeck deps/epgsql
 REBAR = ./rebar
 
 DIALYZER_APPS = erts kernel stdlib crypto ssl public_key
